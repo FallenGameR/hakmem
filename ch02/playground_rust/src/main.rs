@@ -1,26 +1,44 @@
 fn main() {
 
     println!();
+    println!("turn_off_rightmost_1bit => x & (x - 1)");
     let f = turn_off_rightmost_1bit;
-    let x = 0b_1010_1000;
-    println!("turn_off_rightmost_1bit");
-    println!("{:08b}\n{:08b}", x, f(x));
-    let x = 0b_0010_0000;
-    println!("{:08b} is pow2 or zero -> {}", x, f(x) == 0);
-    let x = 0b_0000_0000;
-    println!("{:08b} is pow2 or zero -> {}", x, f(x) == 0);
-    let x = 0b_0000_0101;
-    println!("{:08b} is pow2 or zero -> {}", x, f(x) == 0);
+    apply(0b_1010_1000, 0b_0000_0000, f);
+    println!("pow2 | all zeros");
+    test(0b_0010_0000, f);
+    test(0b_0000_0000, f);
+    test(0b_0000_0101, f);
 
     println!();
+    println!("turn_on_rightmost_0bit => x | (x + 1)");
     let f = turn_on_rightmost_0bit;
-    let x = 0b_1010_0111;
-    println!("turn_on_rightmost_0bit");
-    println!("{:08b}\n{:08b}", x, f(x));
-    let x = 0b_1111_1111;
-    println!("{:08b}\n{:08b}", x, f(x));
+    apply(0b_1010_0111, 0b_1111_1111, f);
 
+    println!();
+    println!("turn_off_rightaligned_1bit_group => x & (x + 1)");
+    let f = turn_off_rightaligned_1bit_group;
+    let x = apply(0b_1010_0111, 0b_1010_0000, f);
+    apply(x, x, f); // doesn't change after there is no righaligned group
+    println!("pow2-1 | all zeros | all ones");
+    test(0b_0011_1111, f);
+    test(0b_0000_0000, f);
+    test(0b_1111_1111, f);
+    test(0b_1010_0111, f);
+}
 
+fn test<F>(x: u8, f: F) where F: Fn(u8) -> u8 {
+    println!(" {:08b} -> {}", x, f(x) == 0)
+}
+
+fn apply<F>(start: u8, stop: u8, f: F) -> u8
+where F: Fn(u8) -> u8 {
+    let mut x = start;
+    println!(" {:08b}", x);
+    while x != stop {
+        x = f(x);
+        println!(" {:08b}", x);
+    }
+    x
 }
 
 /// 0101 1000 => 0101 0000
@@ -34,5 +52,11 @@ fn turn_off_rightmost_1bit(x: u8) -> u8 {
 fn turn_on_rightmost_0bit(x: u8) -> u8 {
     // x | (x + 1)
        x | x.wrapping_add(1)
+}
+
+/// 0101 0111 => 0101 0000
+fn turn_off_rightaligned_1bit_group(x: u8) -> u8 {
+    // x & (x + 1)
+       x & x.wrapping_add(1)
 }
 
