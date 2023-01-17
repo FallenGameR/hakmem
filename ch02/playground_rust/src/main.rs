@@ -18,7 +18,7 @@ fn main() {
     println!("turn_off_rightaligned_1bit_group => x & (x + 1)");
     let f = turn_off_rightaligned_1bit_group;
     let x = apply(0b_1010_0111, 0b_1010_0000, f);
-    apply(x, x, f); // doesn't change after there is no righaligned group
+    println!(" {:08b} same", f(x));
     println!("pow2-1 | all zeros | all ones");
     zero_test(0b_0011_1111, f);
     zero_test(0b_0000_0000, f);
@@ -29,7 +29,7 @@ fn main() {
     println!("turn_on_rightaligned_0bit_group => x | (x - 1)");
     let f = turn_on_rightaligned_0bit_group;
     let x = apply(0b_1010_1000, 0b_1010_1111, f);
-    apply(x, x, f); // doesn't change after there is no righaligned group
+    println!(" {:08b} same", f(x));
 }
 
 fn apply<F>(start: u8, stop: u8, f: F) -> u8
