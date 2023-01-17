@@ -5,9 +5,9 @@ fn main() {
     let f = turn_off_rightmost_1bit;
     apply(0b_1010_1000, 0b_0000_0000, f);
     println!("pow2 | all zeros");
-    test(0b_0010_0000, f);
-    test(0b_0000_0000, f);
-    test(0b_0000_0101, f);
+    zero_test(0b_0010_0000, f);
+    zero_test(0b_0000_0000, f);
+    zero_test(0b_0000_0101, f);
 
     println!();
     println!("turn_on_rightmost_0bit => x | (x + 1)");
@@ -20,14 +20,16 @@ fn main() {
     let x = apply(0b_1010_0111, 0b_1010_0000, f);
     apply(x, x, f); // doesn't change after there is no righaligned group
     println!("pow2-1 | all zeros | all ones");
-    test(0b_0011_1111, f);
-    test(0b_0000_0000, f);
-    test(0b_1111_1111, f);
-    test(0b_1010_0111, f);
-}
+    zero_test(0b_0011_1111, f);
+    zero_test(0b_0000_0000, f);
+    zero_test(0b_1111_1111, f);
+    zero_test(0b_1010_0111, f);
 
-fn test<F>(x: u8, f: F) where F: Fn(u8) -> u8 {
-    println!(" {:08b} -> {}", x, f(x) == 0)
+    println!();
+    println!("turn_on_rightaligned_0bit_group => x | (x - 1)");
+    let f = turn_on_rightaligned_0bit_group;
+    let x = apply(0b_1010_1000, 0b_1010_1111, f);
+    apply(x, x, f); // doesn't change after there is no righaligned group
 }
 
 fn apply<F>(start: u8, stop: u8, f: F) -> u8
@@ -60,3 +62,12 @@ fn turn_off_rightaligned_1bit_group(x: u8) -> u8 {
        x & x.wrapping_add(1)
 }
 
+/// 0101 1000 => 0101 1111
+fn turn_on_rightaligned_0bit_group(x: u8) -> u8 {
+    // x | (x - 1)
+    x | x.wrapping_sub(1)
+}
+
+fn zero_test<F>(x: u8, f: F) where F: Fn(u8) -> u8 {
+    println!(" {:08b} -> {}", x, f(x) == 0)
+}
