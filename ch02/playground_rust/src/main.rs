@@ -103,48 +103,58 @@ fn zero_test<F>(x: u8, f: F, info: &str) where F: Fn(u8) -> u8 {
     }
 }
 
-/// 0101 1000 => 0101 0000
+/// 0101 1000 => 0101 0000 => x & (x - 1)
 /// 0 test to test if number is pow2 or zero
 fn turn_off_rightmost_1bit(x: u8) -> u8 {
-    // x & (x - 1)
-       x & x.wrapping_sub(1)
+    x & x.wrapping_sub(1)
 }
 
-/// 0101 0111 => 0101 1111
-fn turn_on_rightmost_0bit(x: u8) -> u8 {
-    // x | (x + 1)
-       x | x.wrapping_add(1)
-}
-
-/// 0101 0111 => 0101 0000
+/// 0101 0111 => 0101 0000 => x & (x + 1)
 fn turn_off_rightaligned_1bit_group(x: u8) -> u8 {
-    // x & (x + 1)
-       x & x.wrapping_add(1)
+    x & x.wrapping_add(1)
 }
 
-/// 0101 1000 => 0101 1111
+/// 0101 1100 => 0100 0000 => x & (x + (x & -x))
+/// 0000 0100: x & -x
+/// 0110 0000: x + [1]
+/// 0100 0000: x & [2]
+/// 0101 1100 => 0100 0000 => x & (1 + (x | (x-1)))
+/// 0101 1111: x | (x-1)
+/// 0110 0000: 1 + [1]
+/// 0100 0000: x & [2]
+fn turn_off_rightmost_1bit_group(x: u8) -> u8 {
+    let rightmost_bit = mask1_rightmost_1bit(x)
+    x & x.wrapping_add(rightmost_bit)
+
+    // Alternative formula
+    // x & (1 + turn_on_rightaligned_0bit_group(x))
+}
+
+/// 0101 0111 => 0101 1111 => x | (x + 1)
+fn turn_on_rightmost_0bit(x: u8) -> u8 {
+    x | x.wrapping_add(1)
+}
+
+/// 0101 1000 => 0101 1111 => x | (x - 1)
 fn turn_on_rightaligned_0bit_group(x: u8) -> u8 {
-    // x | (x - 1)
     x | x.wrapping_sub(1)
 }
 
-/// 0101 1000: x => 1111 0111
+/// 0101 1000: x => 1111 0111 => !x | (x-1)
 /// 1010 0111: !x
 /// 0101 0111: x-1
 fn mask0_rightmost_1bit(x: u8) -> u8 {
-    // !x | (x-1)
     !x | x.wrapping_sub(1)
 }
 
-/// 0101 0111: x => 0000 1000
+/// 0101 0111: x => 0000 1000 => !x & (x+1)
 /// 0101 1000: x+1
 /// 1010 1000: !x
 fn mask1_rightmost_0bit(x: u8) -> u8 {
-    // !x & (x+1)
     !x & x.wrapping_add(1)
 }
 
-/// 0101 1000: x => 0000 1000
+/// 0101 1000: x => 0000 1000 => x & -x
 /// 1010 0111: !x
 /// 1010 1000: -x = !x + 1; x + (-x) = 0
 fn mask1_rightmost_1bit(x: u8) -> u8 {
@@ -153,29 +163,26 @@ fn mask1_rightmost_1bit(x: u8) -> u8 {
     result as u8
 }
 
-/// 0101 1000 => 0000 0111
+/// 0101 1000 => 0000 0111 => !x & (x-1)
 /// 0101 0111: x-1
 /// 1010 0111: !x
 fn mask1_rightaligned_0bit_group(x: u8) -> u8 {
-    // !x & (x-1)
     !x & x.wrapping_sub(1)
 
     // Alternative formulas that lack instruction level parrallelizm:
-    // !(x | -x)
-    // (x & -x) - 1
+    // 1) !(x | -x)
+    // 2) (x & -x) - 1
 }
 
-/// 0101 0111: x => 1111 1000
+/// 0101 0111: x => 1111 1000 => !x | (x+1)
 /// 1010 1000: !x
 /// 0101 1000: x+1
 fn mask0_rightaligned_1bit_group(x: u8) -> u8 {
-    // !x | (x+1)
     !x | x.wrapping_add(1)
 }
 
-/// 0101 1000 => 0000 1111
+/// 0101 1000 => 0000 1111 => x ^ (x - 1)
 /// 0101 0111: x-1
 fn mask1_extended_rightaligned_0bit_group(x: u8) -> u8 {
-    // x ^ (x - 1)
     x ^ x.wrapping_sub(1)
 }
