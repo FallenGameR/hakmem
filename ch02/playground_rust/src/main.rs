@@ -35,6 +35,11 @@ fn main() {
     println!(" {:08b}", f(x));
 
     println!();
+    println!("mask0_rightaligned_1bit_group => !x | (x + 1)");
+    let f = mask0_rightaligned_1bit_group;
+    apply(0b_1010_0111, 0b_0000_0000, f);
+
+    println!();
     println!("mask1_rightmost_0bit => !x & (x + 1)");
     let f = mask1_rightmost_0bit;
     apply(0b_1010_0111, 0b_0000_0010, f);
@@ -44,6 +49,11 @@ fn main() {
     println!(" {:08b}", f(x));
 
     println!();
+    println!("mask1_rightaligned_0bit_group => !x & (x - 1)");
+    let f = mask1_rightaligned_0bit_group;
+    apply(0b_1010_1000, 0b_1111_1111, f);
+
+    println!();
     println!("mask1_rightmost_1bit => x & -x");
     let f = mask1_rightmost_1bit;
     apply(0b_1010_1000, 0b_0000_1000, f);
@@ -51,16 +61,6 @@ fn main() {
     let x = 0b_0000_0000;
     println!(" {:08b}", x);
     println!(" {:08b}", f(x));
-
-    println!();
-    println!("mask1_rightaligned_0bit_group => !x & (x - 1)");
-    let f = mask1_rightaligned_0bit_group;
-    apply(0b_1010_1000, 0b_1111_1111, f);
-
-    println!();
-    println!("mask0_rightaligned_1bit_group => !x | (x + 1)");
-    let f = mask0_rightaligned_1bit_group;
-    apply(0b_1010_0111, 0b_0000_0000, f);
 
     println!();
     println!("mask1_extended_rightaligned_0bit_group => x ^ (x - 1)");
