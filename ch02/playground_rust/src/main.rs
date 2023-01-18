@@ -10,8 +10,7 @@ fn main() {
     println!();
     println!("turn_off_rightaligned_1bit_group => x & (x + 1)");
     let f = turn_off_rightaligned_1bit_group;
-    let x = apply(0b_1010_0111, 0b_1010_0000, f);
-    println!(" {:08b} - same", f(x));
+    apply(0b_1010_0111, 0b_1010_0000, f);
     zero_test(0b_0011_1111, f, "pow2 - 1");
     zero_test(0b_0000_0000, f, "all zeros");
     zero_test(0b_1111_1111, f, "all ones");
@@ -24,8 +23,7 @@ fn main() {
     println!();
     println!("turn_on_rightaligned_0bit_group => x | (x - 1)");
     let f = turn_on_rightaligned_0bit_group;
-    let x = apply(0b_1010_1000, 0b_1010_1111, f);
-    println!(" {:08b} same", f(x));
+    apply(0b_1010_1000, 0b_1010_1111, f);
 
     println!();
     println!("mask0_rightmost_1bit => !x | (x - 1)");
@@ -48,8 +46,7 @@ fn main() {
     println!();
     println!("mask1_rightmost_1bit => x & -x");
     let f = mask1_rightmost_1bit;
-    let x = apply(0b_1010_1000, 0b_0000_1000, f);
-    println!(" {:08b} - same", f(x));
+    apply(0b_1010_1000, 0b_0000_1000, f);
     println!("all zeros if there is none");
     let x = 0b_0000_0000;
     println!(" {:08b}", x);
@@ -64,17 +61,37 @@ fn main() {
     println!("mask0_rightaligned_1bit_group => !x | (x + 1)");
     let f = mask0_rightaligned_1bit_group;
     apply(0b_1010_0111, 0b_0000_0000, f);
+
+    println!();
+    println!("mask1_extended_rightaligned_0bit_group => x ^ (x - 1)");
+    let f = mask1_extended_rightaligned_0bit_group;
+    apply(0b_1010_1000, 0b_0000_0001, f);
 }
 
-fn apply<F>(start: u8, stop: u8, f: F) -> u8
+fn apply<F>(start: u8, stop: u8, f: F)
 where F: Fn(u8) -> u8 {
     let mut x = start;
+
     println!(" {:08b}", x);
     while x != stop {
         x = f(x);
-        println!(" {:08b}", x);
+        print!(" {:08b}", x);
+
+        if x == stop {
+            if f(x) == stop {
+                println!(" - stays the same");
+            }
+            else if f(f(x)) == stop {
+                println!(" - alternates the last two");
+            }
+            else {
+                println!(" - UNFINISHED SEQUENCE");
+            }
+        }
+        else{
+            println!();
+        }
     }
-    x
 }
 
 fn zero_test<F>(x: u8, f: F, info: &str) where F: Fn(u8) -> u8 {
@@ -148,12 +165,17 @@ fn mask1_rightaligned_0bit_group(x: u8) -> u8 {
     // (x & -x) - 1
 }
 
-
-
 /// 0101 0111: x => 1111 1000
 /// 1010 1000: !x
 /// 0101 1000: x+1
 fn mask0_rightaligned_1bit_group(x: u8) -> u8 {
     // !x | (x+1)
     !x | x.wrapping_add(1)
+}
+
+/// 0101 1000 => 0000 1111
+/// 0101 0111: x-1
+fn mask1_extended_rightaligned_0bit_group(x: u8) -> u8 {
+    // x ^ (x - 1)
+    x ^ x.wrapping_sub(1)
 }
