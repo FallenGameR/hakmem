@@ -1,5 +1,4 @@
 fn main() {
-
     println!();
     println!("turn_off_rightmost_1bit => x & (x - 1)");
     let f = turn_off_rightmost_1bit;
@@ -14,6 +13,11 @@ fn main() {
     zero_test(0b_0011_1111, f, "pow2 - 1");
     zero_test(0b_0000_0000, f, "all zeros");
     zero_test(0b_1111_1111, f, "all ones");
+
+    println!();
+    println!("turn_off_rightmost_1bit_group => x & (x + (x & -x))");
+    let f = turn_off_rightmost_1bit_group;
+    apply(0b_0101_1100, 0b_0000_0000, f);
 
     println!();
     println!("turn_on_rightmost_0bit => x | (x + 1)");
@@ -123,7 +127,7 @@ fn turn_off_rightaligned_1bit_group(x: u8) -> u8 {
 /// 0110 0000: 1 + [1]
 /// 0100 0000: x & [2]
 fn turn_off_rightmost_1bit_group(x: u8) -> u8 {
-    let rightmost_bit = mask1_rightmost_1bit(x)
+    let rightmost_bit = mask1_rightmost_1bit(x);
     x & x.wrapping_add(rightmost_bit)
 
     // Alternative formula
