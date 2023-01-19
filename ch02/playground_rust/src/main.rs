@@ -18,6 +18,7 @@ fn main() {
     println!("turn_off_rightmost_1bit_group => x & (x + (x & -x))");
     let f = turn_off_rightmost_1bit_group;
     apply(0b_0101_1100, 0b_0000_0000, f);
+    println!(" can be used to detect if number is pow2-pow2");
 
     println!();
     println!("turn_on_rightmost_0bit => x | (x + 1)");

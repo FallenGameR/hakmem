@@ -33,6 +33,7 @@
  01011100
  01000000
  00000000 - stays the same
+ can be used to detect if number is pow2-pow2
 ```
 
 ## turn_on_rightmost_0bit
