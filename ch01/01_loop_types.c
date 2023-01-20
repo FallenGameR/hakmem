@@ -14,12 +14,15 @@ while( e2 )
 
 
 e1
-do
+if( e2 ) // otherwise it will be done at least once, without checking e2
 {
-    x // will be done at least once, without checking e2
-    e3
+    do
+    {
+        x
+        e3
+    }
+    while( e2 )
 }
-while( e2 )
 // xx
 
 e1: i = 1
